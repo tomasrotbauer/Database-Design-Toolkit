@@ -85,17 +85,14 @@ def main():
     
 def minimal_basis(S):
     set = []
-    print("First, split up the left hand sides of FDs so that each FD has only one attribute on right hand side.")
     for fd in S:
         lrhs = fd.split('->')
         for a in lrhs[1]:
             set.append(lrhs[0] + '->' + a)
-    print(set)
             
     for idx in range(len(set)):
         lrhs = set[idx].split('->')
         l = len(lrhs[0])
-        print("Considering FD", set[idx])
         if l > 1:
             for i in itertools.product([0,1],repeat=l):
                 X = ""
@@ -104,11 +101,8 @@ def minimal_basis(S):
                         X += lrhs[0][j]  
                 
                 if follows(S, X, lrhs[1]):
-                    print("    This FD can be minimized to", X, "-->", lrhs[1], "which follows from the original set S.")
                     set[idx] = X + '->' + lrhs[1]
                     break
-        else:
-            print("FD", set[idx], "already minimal")
     
     idx = 0
     while(idx < len(set)):
@@ -159,13 +153,11 @@ def project(S, L):
             continue
 
         Xplus = closure(X, S)
-        print("subset: ", X, "with closure: ", Xplus)
         a = ""
         for A in Xplus:
             if A in L:
                 a += A
 
-        print("    attributes in L: ", a)
         T.append(X + '->' + a)
 
     return minimal_basis(T)
@@ -175,22 +167,17 @@ def BCNF_decomp(R, F):
     i = 0
     FDs = F
     while i < len(result):
-        print("Considering relation: ", result[i])
         if len(result) > 1:
             FDs = project(F, result[i])
-            print("Newly projected FDs: ", FDs)
         violates = False
         for fd in FDs:
-            print ("    FD: ", fd)
             lrhs = fd.split('->')
             Xplus = closure(lrhs[0], F)
-            print("The closure(", fd, ") = ", Xplus)
             for a in result[i]:
                 if a not in Xplus:
                     violates = True
                     break
             if violates:
-                print("Therefore, ", fd, "violates BCNF because")
                 R1 = Xplus
                 R2 = Xplus
                 for a in lrhs[0]:
@@ -202,16 +189,12 @@ def BCNF_decomp(R, F):
                 result.pop(i)
                 result.append(R1)
                 result.append(R2)
-                print("Decomposing into R1: ", R1, "and R2: ", R2)
                 break
-            print("Therefore, ", fd, "does not violate BCNF")
         if not violates:
-            print("No FDs violate BCNF --> Add to results")
             result[i] += "; "
             for fd in FDs:
                 result[i] += fd + ", "
             result[i] = result[i][:-2]
-            print("Results now include: ", result)
             i += 1
                 
     return list(dict.fromkeys(result))
@@ -262,7 +245,6 @@ def find_keys(F, R, super):
                     if j[k]:
                         X += R[k]
                 Xplus = closure(X, F)
-                print("Trying key:", X, ". Closure(", X, ") =", Xplus)
                 key = True
                 for k in R:
                     if k not in Xplus:
@@ -281,7 +263,6 @@ def find_keys(F, R, super):
                                     break
                                     
                     if key:
-                        print(X, "is a key")
                         result.append(X);
                                    
     return result
