@@ -84,14 +84,14 @@ def main():
     return
     
 def minimal_basis(S):
-    set = []
+    _set = []
     for fd in S:
         lrhs = fd.split('->')
         for a in lrhs[1]:
-            set.append(lrhs[0] + '->' + a)
+            _set.append(lrhs[0] + '->' + a)
             
-    for idx in range(len(set)):
-        lrhs = set[idx].split('->')
+    for idx in range(len(_set)):
+        lrhs = _set[idx].split('->')
         l = len(lrhs[0])
         if l > 1:
             for i in itertools.product([0,1],repeat=l):
@@ -101,18 +101,18 @@ def minimal_basis(S):
                         X += lrhs[0][j]  
                 
                 if follows(S, X, lrhs[1]):
-                    set[idx] = X + '->' + lrhs[1]
+                    _set[idx] = X + '->' + lrhs[1]
                     break
     
     idx = 0
-    while(idx < len(set)):
-        fd = set.pop(idx)
+    while(idx < len(_set)):
+        fd = _set.pop(idx)
         lrhs = fd.split('->')
-        if not follows(set, lrhs[0], lrhs[1]):
-            set.insert(idx, fd)
+        if not follows(_set, lrhs[0], lrhs[1]):
+            _set.insert(idx, fd)
             idx += 1
                 
-    return set
+    return _set
 
 def closure(Y, S):
     change = True
@@ -235,7 +235,7 @@ def _3NF_synth(F, L):
     result.append(find_keys(F, L, False)[0])
     return result
     
-def find_keys(F, R, super):
+def find_keys(F, R, _super):
     result = []
     for i in range(1, len(R) + 1):
         for j in itertools.product([0,1], repeat=len(R)):
@@ -252,7 +252,7 @@ def find_keys(F, R, super):
                         break
                         
                 if key:
-                    if not super:
+                    if not _super:
                         for r in result:
                             if not key:
                                 break
@@ -263,7 +263,7 @@ def find_keys(F, R, super):
                                     break
                                     
                     if key:
-                        result.append(X);
+                        result.append(X)
                                    
     return result
 if __name__ == '__main__':
